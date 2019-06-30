@@ -32,6 +32,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Kowalski");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
@@ -64,4 +65,35 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void shouldFindUserByName(){
+        User persistedUser = entityManager.persist(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "","");
+
+        Assert.assertThat(users.contains(persistedUser), Matchers.is(true));
+    }
+
+    @Test
+    public void shouldFindUserBySurname(){
+        User persistedUser = entityManager.persist(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "Kowalski","");
+
+        Assert.assertThat(users.contains(persistedUser), Matchers.is(true));
+    }
+
+    @Test
+    public void shouldFindUserByEmail(){
+        User persistedUser = entityManager.persist(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "","john@domain.com");
+
+        Assert.assertThat(users.contains(persistedUser), Matchers.is(true));
+    }
+
+    @Test
+    public void shouldNotFindUser(){
+        User persistedUser = entityManager.persist(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong data", "wrong data","wrong data");
+
+        Assert.assertThat(users.contains(persistedUser), Matchers.is(false));
+    }
 }
