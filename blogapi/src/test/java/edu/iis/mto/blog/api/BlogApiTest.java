@@ -1,5 +1,6 @@
 package edu.iis.mto.blog.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,7 +53,7 @@ public class BlogApiTest {
     }
 
     @Test
-    public void DataIntegrityViolationException_ShouldRespondWithStatus409() throws Exception{
+    public void postBlogUser_whenDataIntegrityViolationException_shouldRespondWithStatus409() throws Exception{
         UserRequest user = new UserRequest();
         user.setEmail("doe@domain.com");
         user.setFirstName("John");
@@ -62,6 +63,11 @@ public class BlogApiTest {
 
         mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isConflict());
+    }
+
+    @Test
+    public void getNonExistingUser_shouldResponsWithStatus404() throws Exception{
+        mvc.perform(get("/blog/user/id/{id}",666)).andExpect(status().isNotFound());
     }
 
 
