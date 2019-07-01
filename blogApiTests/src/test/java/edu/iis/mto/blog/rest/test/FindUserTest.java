@@ -3,41 +3,43 @@ package edu.iis.mto.blog.rest.test;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
-import org.json.JSONObject;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 
-public class FindPostTest extends FunctionalTests {
+public class FindUserTest extends FunctionalTests  {
 
-    private static final String POST_API_FIND_POST_CONFIRMED_USER = "/blog/user/1/post";
-    private static final String POST_API_FIND_POST_REMOVED_USER = "/blog/user/4/post";
+    private static final String USER_API_FIND_USER = "/blog/user/find";
 
     @Test
-    public void findPost_confirmedUser_shouldFindOnePost() {
+    public void findUser_shouldFindTwoUsers() {
         RestAssured.given()
                 .accept(ContentType.JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
+                .param("searchString", "Steward")
                 .expect()
                 .log()
                 .all()
                 .statusCode(HttpStatus.SC_OK)
                 .and()
-                .body("size", is(1))
+                .body("size", is(2))
                 .when()
-                .get(POST_API_FIND_POST_CONFIRMED_USER);
+                .get(USER_API_FIND_USER);
     }
 
     @Test
-    public void findPost_removedUser_shouldNotFind() {
+    public void findUser_shouldFindRemovedUser() {
         RestAssured.given()
                 .accept(ContentType.JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
+                .param("searchString", "Removed")
                 .expect()
                 .log()
                 .all()
-                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .statusCode(HttpStatus.SC_OK)
+                .and()
+                .body("size", is(0))
                 .when()
-                .get(POST_API_FIND_POST_REMOVED_USER);
+                .get(USER_API_FIND_USER);
     }
 }
