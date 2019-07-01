@@ -25,4 +25,49 @@ public class CreateUserTest extends FunctionalTests {
                    .when()
                    .post(USER_API);
     }
+
+    @Test
+    public void addUser_uniqueEmail_shouldAdd() {
+        JSONObject jsonObj = new JSONObject().put("email", "emma@domain.com");
+        RestAssured.given()
+                .accept(ContentType.JSON)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString())
+                .expect()
+                .log()
+                .all()
+                .statusCode(HttpStatus.SC_CREATED)
+                .when()
+                .post(USER_API);
+    }
+
+    @Test
+    public void addUser_notUniqueEmail_shouldNotAdd() {
+        JSONObject jsonObj = new JSONObject().put("email", "emma@domain.com");
+        RestAssured.given()
+                .accept(ContentType.JSON)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString())
+                .expect()
+                .log()
+                .all()
+                .statusCode(HttpStatus.SC_CONFLICT)
+                .when()
+                .post(USER_API);
+    }
+
+    @Test
+    public void addPost_userConfirmed_shouldAdd() {
+        JSONObject jsonObj = new JSONObject().put("email", "emma@domain.com");
+        RestAssured.given()
+                .accept(ContentType.JSON)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString())
+                .expect()
+                .log()
+                .all()
+                .statusCode(HttpStatus.SC_CONFLICT)
+                .when()
+                .post(USER_API);
+    }
 }
